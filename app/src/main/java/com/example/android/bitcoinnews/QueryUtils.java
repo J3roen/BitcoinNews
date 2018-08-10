@@ -3,7 +3,6 @@ package com.example.android.bitcoinnews;
 import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -29,12 +28,13 @@ public final class QueryUtils {
     }
 
     //fetch article data from url & return data list
-    public static List<Article> fetchArticleData(String url) throws Exception {
+    public static List<Article> fetchArticleData(String url) {
         Log.d(LOG_TAG, "TEST: fetchArticleData method called");
         //get JSONResponse from param url
         String JSONResponse = getJSONResponse(url);
         //get article list from JSONResponse
-        return extractArticles(JSONResponse);
+        List<Article> articles = extractArticles(JSONResponse);
+        return articles;
     }
 
     private static String getJSONResponse(String stringUrl) {
@@ -114,7 +114,7 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    private static ArrayList<Article> extractArticles(String JSONResponse) throws Exception {
+    private static ArrayList<Article> extractArticles(String JSONResponse) {
 
         // Create an empty ArrayList that we can start adding articles to
         ArrayList<Article> articles = new ArrayList<>();
@@ -139,17 +139,12 @@ public final class QueryUtils {
                 section = object.getString("sectionName");
                 if (object.getString("webPublicationDate") != null)
                     datePublished = object.getString("webPublicationDate");
-                try {
-                    JSONArray tagArray = object.getJSONArray("tags");
-                    object = tagArray.getJSONObject(0);
-                    author = object.getString("webTitle");
-                } catch (JSONException e) {
-                    throw new Exception("Error while parsing JSON request");
-                }
+                JSONArray tagArray = object.getJSONArray("tags");
+                object = tagArray.getJSONObject(0);
+                author = object.getString("webTitle");
                 articles.add(new Article(header, body, section, datePublished, author));
             }
-
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e(LOG_TAG, "Something went wrong in extractArticles method: " + e.toString());
         }
 

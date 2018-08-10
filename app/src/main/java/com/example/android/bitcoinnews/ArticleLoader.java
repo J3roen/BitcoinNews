@@ -29,4 +29,6 @@ public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
         if(this.url == null) { return null;}
         return QueryUtils.fetchArticleData(this.url);
     }
+
+
 }
