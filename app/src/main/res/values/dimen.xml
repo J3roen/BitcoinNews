@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="listItem_bottom_margin">8dp</dimen>
+    <dimen name="listItem_padding">8dp</dimen>
+    <dimen name="container_side_margin">16dp</dimen>
+    <dimen name="container_top_margin">16dp</dimen>
+    <dimen name="article_header_text_size">24sp</dimen>
+    <dimen name="article_body_text_size">16sp</dimen>
+    <dimen name="article_section_text_size">12sp</dimen>
+    <dimen name="article_section_bottom_margin">4dp</dimen>
+    <dimen name="article_date_text_size">10sp</dimen>
+    <dimen name="article_author_text_size">10sp</dimen>
+</resources>

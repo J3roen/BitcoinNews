@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Bitcoin News</string>
+    <string name="article_header">This is the text for the article\'s header</string>
+    <string name="article_body">This is the text for the article\'s body ... this is supposed to be a very long text, but i don't care at all!</string>
+    <string name="article_section">Article section here</string>
+    <string name="article_date">YYYY/MM/DD</string>
+    <string name="article_author">#author</string>
+    <string name="article_date_published">published on &#160;</string>
+    <string name="no_articles_found">No articles have been found.\nPlease try again later.</string>
+    <string name="no_connection">This app needs a working internet connection, please connect to the internet and refresh the application.</string>
+</resources>
