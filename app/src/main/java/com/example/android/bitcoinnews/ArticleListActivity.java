@@ -33,18 +33,16 @@ import java.util.List;
 
 public class ArticleListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Article>> {
 
+    private static final int ARTICLE_LOADER_ID = 1;
+    private static final String LOG_TAG = ArticleListActivity.class.getSimpleName();
+    private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoin&lang=en&page-size=50&show-tags=contributor&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    /*use one of 2 sample URL's (first one gives 0 hits)*/
-    //private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoinfezrtr&lang=en&page-size=50&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
-    private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoin&lang=en&page-size=50&show-tags=contributor&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
-    private static final int ARTICLE_LOADER_ID = 1;
-    private static final String LOG_TAG = ArticleListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(checkConnection())
+        if (checkConnection())
             super.onCreate(savedInstanceState);
         else
             super.onCreate(null);
@@ -54,14 +52,11 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
 
     private boolean checkConnection() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED)
-            return true;
-        else
-            return false;
+        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
     }
 
-    private void setContentView (final boolean hasArticles) {
+    private void setContentView(final boolean hasArticles) {
         if (checkConnection() && (!hasArticles)) {
             setErrorLayout(getResources().getString(R.string.no_articles_found));
         } else {
@@ -97,7 +92,7 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
 
     private void setListLayout() {
         setContentView(R.layout.activity_article_list);
-        //create Loadermanager to manage AsyncTaskLoader to fetch earthquakes from url
+        //create Loadermanager to manage AsyncTaskLoader to fetch data from url
         LoaderManager loaderManager = getLoaderManager();
         Log.d(LOG_TAG, "TEST: LoaderManager.initLoader called");
         loaderManager.initLoader(ARTICLE_LOADER_ID, null, this);
@@ -117,16 +112,16 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
         //if articleList == 0 (no results) -> show TextView saying no results found
         if (articleList.size() == 0) {
             setContentView(false);
-        }
-        else { //if articleList > 0, set adapter
+        } else { //if articleList > 0, set adapter
             // Find a reference to the {@link RecyclerView} in the layout
-            mRecyclerView = (RecyclerView) findViewById(R.id.recyclerList);
+            mRecyclerView = findViewById(R.id.recyclerList);
             //use a linear layout manager
             mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
             mRecyclerView.setLayoutManager(mLayoutManager);
             // Create & set custom adapter
             mAdapter = new ArticleListAdapter((ArrayList) articleList, this);
-            mRecyclerView.setAdapter(mAdapter);}
+            mRecyclerView.setAdapter(mAdapter);
+        }
     }
 
     @Override

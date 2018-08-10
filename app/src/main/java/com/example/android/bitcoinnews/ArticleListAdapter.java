@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +17,46 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     private ArrayList<Article> mDataset;
     private Context mContext;
 
-    /**
-     * Provide a reference to the views for each data item
-     * Complex data items may need more than one view per item, and
-     * you provide access to all the views for a data item in a view holder
-     */
+    ArticleListAdapter(ArrayList<Article> data, Context mContext) {
+        this.mDataset = data;
+        this.mContext = mContext;
+    }
+
+    @NonNull
+    @Override
+    public com.example.android.bitcoinnews.ArticleListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.article_list_item, parent, false);
+        return new ViewHolder(itemView);
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onBindViewHolder(@NonNull com.example.android.bitcoinnews.ArticleListAdapter.ViewHolder holder, int position) {
+
+        Article article = mDataset.get(position);
+        holder.headerView.setText(article.getHeader());
+        holder.bodyView.setText(article.getBody());
+        holder.sectionView.setText(article.getSection());
+        String s = mContext.getString(R.string.article_date_published);
+        if (article.getDatePublished() != null) {
+            holder.dateView.setVisibility(View.VISIBLE);
+            holder.dateView.setText(s + article.getDatePublished().substring(0, article.getDatePublished().indexOf("T")));
+        } else
+            holder.dateView.setVisibility(View.GONE);
+        s = mContext.getString(R.string.article_author_name);
+        if (article.getAuthor() != null) {
+            holder.authorView.setText(s + article.getAuthor().toString());
+            holder.authorView.setVisibility(View.VISIBLE);
+        } else
+            holder.authorView.setVisibility(View.GONE);
+        holder.setListItem(article);
+
+        //add onClickListener to parent Layout of item list
+        ViewGroup parent = (ViewGroup) holder.headerView.getParent();
+        parent.setOnClickListener(holder);
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView headerView;
         private TextView bodyView;
@@ -29,16 +65,16 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         private TextView dateView;
         private TextView authorView;
 
-        public ViewHolder(View v) {
+        ViewHolder(View v) {
             super(v);
-            this.headerView = (TextView) v.findViewById(R.id.article_header);
-            this.bodyView = (TextView) v.findViewById(R.id.article_body);
-            this.sectionView = (TextView) v.findViewById(R.id.article_section);
-            this.dateView = (TextView) v.findViewById(R.id.article_date);
-            this.authorView = (TextView) v.findViewById(R.id.article_author);
+            this.headerView = v.findViewById(R.id.article_header);
+            this.bodyView = v.findViewById(R.id.article_body);
+            this.sectionView = v.findViewById(R.id.article_section);
+            this.dateView = v.findViewById(R.id.article_date);
+            this.authorView = v.findViewById(R.id.article_author);
         }
 
-        public void setListItem(Article listItem) {
+        void setListItem(Article listItem) {
             this.article = listItem;
         }
 
@@ -49,59 +85,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             i.setData(Uri.parse(url));
             v.getContext().startActivity(i);
         }
-    }
-
-    /**
-     * Provide a suitable constructor (depends on the kind of dataset)
-     */
-    public ArticleListAdapter(ArrayList<Article> data, Context mContext) {
-        this.mDataset = data;
-        this.mContext = mContext;
-    }
-
-    /**
-     * Create new views (invoked by the layout manager)
-     */
-    @Override
-    public com.example.android.bitcoinnews.ArticleListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        /** create a new view*/
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.article_list_item, parent, false);
-        return new ViewHolder(itemView);
-    }
-
-    /**
-     * Replace the contents of a view (invoked by the layout manager)
-     */
-    @SuppressLint("NewApi")
-    @Override
-    public void onBindViewHolder(com.example.android.bitcoinnews.ArticleListAdapter.ViewHolder holder, int position) {
-        /** - get element from your dataset at this position
-         / - replace the contents of the view with that element*/
-        Article article = mDataset.get(position);
-        holder.headerView.setText(article.getHeader());
-        holder.bodyView.setText(article.getBody());
-        holder.sectionView.setText(article.getSection());
-        String s = mContext.getString(R.string.article_date_published);
-        if (article.getDatePublished() != null) {
-            StringBuilder sb = new StringBuilder(s);
-            sb.append(article.getDatePublished().substring(0, article.getDatePublished().indexOf("T")));
-            holder.dateView.setVisibility(View.VISIBLE);
-            holder.dateView.setText(sb.toString());
-        } else
-            holder.dateView.setVisibility(View.GONE);
-        s = mContext.getString(R.string.article_author_name);
-        if (article.getAuthor() != null) {
-            StringBuilder sb = new StringBuilder(s);
-            holder.authorView.setText(sb.append(article.getAuthor()).toString());
-            holder.authorView.setVisibility(View.VISIBLE);
-        } else
-            holder.authorView.setVisibility(View.GONE);
-        holder.setListItem(article);
-
-        //add onClickListener to parent Layout of item list
-        ViewGroup parent = (ViewGroup) holder.headerView.getParent();
-        parent.setOnClickListener(holder);
     }
 
     @Override

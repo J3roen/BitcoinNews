@@ -18,33 +18,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Helper methods related to requesting and receiving earthquake data from USGS.
+ * Helper methods related to requesting and receiving article data from Guardian.
  */
 public final class QueryUtils {
 
-    public static final String LOG_TAG = QueryUtils.class.getSimpleName();
+    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
-    /**
-     * Create a private constructor because no one should ever create a {@link QueryUtils} object.
-     * This class is only meant to hold static variables and methods, which can be accessed
-     * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
-     */
+
     private QueryUtils() {
     }
 
-    //fetch earthquake data from url & return data list
-    public static List<Article> fetchArticleData(String url) {
-        Log.d(LOG_TAG, "TEST: fetchEarthquakeData method called");
+    //fetch article data from url & return data list
+    public static List<Article> fetchArticleData(String url) throws Exception {
+        Log.d(LOG_TAG, "TEST: fetchArticleData method called");
         //get JSONResponse from param url
         String JSONResponse = getJSONResponse(url);
-        //get earthquake list from JSONResponse
-        ArrayList<Article> earthquakeArrayList = extractArticles(JSONResponse);
-        return earthquakeArrayList;
+        //get article list from JSONResponse
+        return extractArticles(JSONResponse);
     }
 
-    /**
-     * get a JSON response from a given URL
-     */
     private static String getJSONResponse(String stringUrl) {
         //create URL using inner method
         URL url = createURL(stringUrl);
@@ -95,7 +87,7 @@ public final class QueryUtils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the JSON results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -122,11 +114,7 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    /**
-     * Return a list of {@link Article} objects that has been built up from
-     * parsing a JSON response.
-     */
-    private static ArrayList<Article> extractArticles(String JSONResponse) {
+    private static ArrayList<Article> extractArticles(String JSONResponse) throws Exception {
 
         // Create an empty ArrayList that we can start adding articles to
         ArrayList<Article> articles = new ArrayList<>();
@@ -143,7 +131,7 @@ public final class QueryUtils {
             String body;
             String section;
             String datePublished = null;
-            String author = null;
+            String author;
             for (int i = 0; i < array.length(); i++) {
                 object = array.getJSONObject(i);
                 header = object.getString("webTitle");
@@ -156,11 +144,13 @@ public final class QueryUtils {
                     object = tagArray.getJSONObject(0);
                     author = object.getString("webTitle");
                 } catch (JSONException e) {
+                    throw new Exception("Error while parsing JSON request");
                 }
                 articles.add(new Article(header, body, section, datePublished, author));
             }
 
         } catch (JSONException e) {
+            Log.e(LOG_TAG, "Something went wrong in extractArticles method: " + e.toString());
         }
 
         // Return the list of articles
