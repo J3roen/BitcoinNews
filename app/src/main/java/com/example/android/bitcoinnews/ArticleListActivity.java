@@ -95,7 +95,10 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
         //create Loadermanager to manage AsyncTaskLoader to fetch data from url
         LoaderManager loaderManager = getLoaderManager();
         Log.d(LOG_TAG, "TEST: LoaderManager.initLoader called");
-        loaderManager.initLoader(ARTICLE_LOADER_ID, null, this);
+        if (loaderManager.getLoader(ARTICLE_LOADER_ID) != null)
+            loaderManager.restartLoader(ARTICLE_LOADER_ID, null, this);
+        else
+            loaderManager.initLoader(ARTICLE_LOADER_ID, null, this);
     }
 
     @Override
