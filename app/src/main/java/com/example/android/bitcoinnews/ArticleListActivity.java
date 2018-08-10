@@ -26,8 +26,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,15 +38,18 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
     private RecyclerView.LayoutManager mLayoutManager;
     /*use one of 2 sample URL's (first one gives 0 hits)*/
     //private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoinfezrtr&lang=en&page-size=50&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
-     private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoin&lang=en&page-size=50&show-tags=contributor&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
+    private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoin&lang=en&page-size=50&show-tags=contributor&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
     private static final int ARTICLE_LOADER_ID = 1;
     private static final String LOG_TAG = ArticleListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //check internet connection, if false -> set SwipeRefreshLayout in no_connection_found.xml
-        setContentView(checkConnection());
+        if(checkConnection())
+            super.onCreate(savedInstanceState);
+        else
+            super.onCreate(null);
+        //check internet connection, if false -> set SwipeRefreshLayout in error_message.xml
+        setContentView();
     }
 
     private boolean checkConnection() {
@@ -60,44 +61,46 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
             return false;
     }
 
-    private void setContentView(final boolean isConnected) {
-        //if isConnected -> set activity_article_list.xml layout and continue app
-        if (isConnected) {
-            setContentView(R.layout.activity_article_list);
-
-            //create Loadermanager to manage AsyncTaskLoader to fetch earthquakes from url
-            LoaderManager loaderManager = getLoaderManager();
-            Log.d(LOG_TAG, "TEST: LoaderManager.initLoader called");
-            loaderManager.initLoader(ARTICLE_LOADER_ID, null, this);
+    private void setContentView (final boolean hasArticles) {
+        if (checkConnection() && (!hasArticles)) {
+            setErrorLayout(getResources().getString(R.string.no_articles_found));
         } else {
-            //if no internet connection -> set no_connection_found.xml, no further action + refresh listener
-            setContentView(R.layout.no_connection_found);
-            SwipeRefreshLayout mSwipeRefreshLayout = findViewById(R.id.refreshLayout);
-            mSwipeRefreshLayout.setOnRefreshListener(
-                    new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
-                            //on refresh, check internet connection and set contentView accordingly
-                            setContentView(checkConnection());
-                        }
-                    }
-            );
+            setContentView();
         }
     }
 
-    //method for updating UI, using Earthquake List as param
-    private void updateUI(List<Article> articleList) {
+    private void setContentView() {
+        //if isConnected -> set activity_article_list.xml layout and continue app
+        if (checkConnection()) {
+            setListLayout();
+        } else {
+            setErrorLayout(getResources().getString(R.string.no_connection));
+        }
+    }
 
-        // Find a reference to the {@link RecyclerView} in the layout
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerList);
+    private void setErrorLayout(String message) {
+        //if no internet connection -> set error_message.xml, no further action + refresh listener
+        setContentView(R.layout.error_message);
+        TextView error = findViewById(R.id.errorMessage);
+        error.setText(message);
+        SwipeRefreshLayout mSwipeRefreshLayout = findViewById(R.id.refreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        //on refresh, check internet connection and set contentView accordingly
+                        setContentView();
+                    }
+                }
+        );
+    }
 
-        //use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // Create & set custom adapter
-        mAdapter = new ArticleListAdapter((ArrayList) articleList, this);
-        mRecyclerView.setAdapter(mAdapter);
+    private void setListLayout() {
+        setContentView(R.layout.activity_article_list);
+        //create Loadermanager to manage AsyncTaskLoader to fetch earthquakes from url
+        LoaderManager loaderManager = getLoaderManager();
+        Log.d(LOG_TAG, "TEST: LoaderManager.initLoader called");
+        loaderManager.initLoader(ARTICLE_LOADER_ID, null, this);
     }
 
     @Override
@@ -111,16 +114,11 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
     public void onLoadFinished(Loader<List<Article>> loader, List<Article> articleList) {
         Log.d(LOG_TAG, "TEST: onLoadFinished method called");
 
-        //if articleList == 0 (no results) -> show toast message saying no results found
+        //if articleList == 0 (no results) -> show TextView saying no results found
         if (articleList.size() == 0) {
-            TextView mTextView = new TextView(this);
-            mTextView.setText(getResources().getString(R.string.no_articles_found));
-            mTextView.setGravity(Gravity.CENTER);
-            LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER);
-            mTextView.setLayoutParams(layout);
-            this.addContentView(mTextView,layout);
+            setContentView(false);
         }
-        else {
+        else { //if articleList > 0, set adapter
             // Find a reference to the {@link RecyclerView} in the layout
             mRecyclerView = (RecyclerView) findViewById(R.id.recyclerList);
             //use a linear layout manager
