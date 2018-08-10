@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -81,14 +80,17 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         holder.headerView.setText(article.getHeader());
         holder.bodyView.setText(article.getBody());
         holder.sectionView.setText(article.getSection());
-        if (article.getDatePublished() != null)
-            holder.dateView.append(article.getDatePublished().substring(0,article.getDatePublished().indexOf("T")));
-        else
-            ((ViewManager) holder.dateView.getParent()).removeView(holder.dateView);
-        if (article.getAuthor() != null)
+        if (article.getDatePublished() != null) {
+            holder.dateView.append(article.getDatePublished().substring(0, article.getDatePublished().indexOf("T")));
+            holder.dateView.setVisibility(View.VISIBLE);
+        }else
+            holder.dateView.setVisibility(View.GONE);
+        if (article.getAuthor() != null) {
             holder.authorView.setText(article.getAuthor());
+            holder.authorView.setVisibility(View.VISIBLE);
+        }
         else
-            ((ViewManager) holder.authorView.getParent()).removeView(holder.authorView);
+            holder.authorView.setVisibility(View.GONE);
         holder.setListItem(article);
 
         //add onClickListener to parent Layout of item list
