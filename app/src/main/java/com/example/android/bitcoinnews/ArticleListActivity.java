@@ -40,7 +40,7 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
     private RecyclerView.LayoutManager mLayoutManager;
     /*use one of 2 sample URL's (first one gives 0 hits)*/
     //private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoinfezrtr&lang=en&page-size=50&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
-     private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoin&lang=en&page-size=50&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
+     private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoin&lang=en&page-size=50&show-tags=contributor&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
     private static final int ARTICLE_LOADER_ID = 1;
     private static final String LOG_TAG = ArticleListActivity.class.getSimpleName();
 
@@ -96,7 +96,7 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // Create & set custom adapter
-        mAdapter = new ArticleListAdapter((ArrayList) articleList);
+        mAdapter = new ArticleListAdapter((ArrayList) articleList, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -127,7 +127,7 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
             mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
             mRecyclerView.setLayoutManager(mLayoutManager);
             // Create & set custom adapter
-            mAdapter = new ArticleListAdapter((ArrayList) articleList);
+            mAdapter = new ArticleListAdapter((ArrayList) articleList, this);
             mRecyclerView.setAdapter(mAdapter);}
     }
 

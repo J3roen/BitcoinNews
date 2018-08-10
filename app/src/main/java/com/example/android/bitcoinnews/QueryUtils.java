@@ -151,8 +151,12 @@ public final class QueryUtils {
                 section = object.getString("sectionName");
                 if (object.getString("webPublicationDate") != null)
                     datePublished = object.getString("webPublicationDate");
-                try{author = object.getString("author");}
-                catch(JSONException e) {}
+                try {
+                    JSONArray tagArray = object.getJSONArray("tags");
+                    object = tagArray.getJSONObject(0);
+                    author = object.getString("webTitle");
+                } catch (JSONException e) {
+                }
                 articles.add(new Article(header, body, section, datePublished, author));
             }
 

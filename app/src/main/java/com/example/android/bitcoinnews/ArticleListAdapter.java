@@ -1,6 +1,7 @@
 package com.example.android.bitcoinnews;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.ViewHolder> {
     private ArrayList<Article> mDataset;
+    private Context mContext;
 
     /**
      * Provide a reference to the views for each data item
@@ -32,7 +34,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             this.headerView = (TextView) v.findViewById(R.id.article_header);
             this.bodyView = (TextView) v.findViewById(R.id.article_body);
             this.sectionView = (TextView) v.findViewById(R.id.article_section);
-            this.dateView =(TextView) v.findViewById(R.id.article_date);
+            this.dateView = (TextView) v.findViewById(R.id.article_date);
             this.authorView = (TextView) v.findViewById(R.id.article_author);
         }
 
@@ -52,8 +54,9 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     /**
      * Provide a suitable constructor (depends on the kind of dataset)
      */
-    public ArticleListAdapter(ArrayList<Article> data) {
+    public ArticleListAdapter(ArrayList<Article> data, Context mContext) {
         this.mDataset = data;
+        this.mContext = mContext;
     }
 
     /**
@@ -64,7 +67,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         /** create a new view*/
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.article_list_item, parent, false);
-
         return new ViewHolder(itemView);
     }
 
@@ -80,16 +82,20 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         holder.headerView.setText(article.getHeader());
         holder.bodyView.setText(article.getBody());
         holder.sectionView.setText(article.getSection());
+        String s = mContext.getString(R.string.article_date_published);
         if (article.getDatePublished() != null) {
-            holder.dateView.append(article.getDatePublished().substring(0, article.getDatePublished().indexOf("T")));
+            StringBuilder sb = new StringBuilder(s);
+            sb.append(article.getDatePublished().substring(0, article.getDatePublished().indexOf("T")));
             holder.dateView.setVisibility(View.VISIBLE);
-        }else
+            holder.dateView.setText(sb.toString());
+        } else
             holder.dateView.setVisibility(View.GONE);
+        s = mContext.getString(R.string.article_author_name);
         if (article.getAuthor() != null) {
-            holder.authorView.setText(article.getAuthor());
+            StringBuilder sb = new StringBuilder(s);
+            holder.authorView.setText(sb.append(article.getAuthor()).toString());
             holder.authorView.setVisibility(View.VISIBLE);
-        }
-        else
+        } else
             holder.authorView.setVisibility(View.GONE);
         holder.setListItem(article);
 

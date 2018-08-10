@@ -8,4 +8,5 @@
     <string name="article_date_published">published on &#160;</string>
     <string name="no_articles_found">No articles have been found.\nPlease try again later.</string>
     <string name="no_connection">This app needs a working internet connection, please connect to the internet and refresh the application.</string>
+    <string name="article_author_name">Written by:&#160;</string>
 </resources>

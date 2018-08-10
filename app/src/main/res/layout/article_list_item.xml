@@ -34,7 +34,6 @@
         android:textSize="@dimen/article_date_text_size"
         tools:text="@string/article_date"
         android:id="@+id/article_date"
-        android:text="@string/article_date_published"
         />
     <TextView
         android:layout_width="match_parent"

@@ -7,8 +7,6 @@ public class Article implements Serializable {
     private String body;
     private String section;
     private String datePublished;
-
-
     private String author;
 
     public Article(String header, String body, String section, String datePublished, String author) {
