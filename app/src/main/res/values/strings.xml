@@ -1,12 +1,41 @@
 <resources>
-    <string name="app_name">Bitcoin News</string>
+    <!-- Strings used in general for the app!-->
+    <string name="app_name">Guardian News Search</string>
     <string name="article_header">This is the text for the article\'s header</string>
     <string name="article_body">This is the text for the article\'s body ... this is supposed to be a very long text, but i don't care at all!</string>
     <string name="article_section">Article section here</string>
     <string name="article_date">YYYY/MM/DD</string>
     <string name="article_author">#author</string>
     <string name="article_date_published">published on &#160;</string>
+    <string name="article_author_name">Written by:&#160;</string>
+
+    <!-- Strings for on screen error messages!-->
     <string name="no_articles_found">No articles have been found.\nPlease try again later.</string>
     <string name="no_connection">This app needs a working internet connection, please connect to the internet and refresh the application.</string>
-    <string name="article_author_name">Written by:&#160;</string>
+
+    <!-- Srtings used for general settings screen!-->
+    <string name="settings_menu_item">Settings</string>
+    <string name="settings_title">News Settings</string>
+
+    <!-- Strings used for order-by preference!-->
+    <string name="settings_order_by_label">Order By</string>
+    <string name="settings_order_by_key" translatable="false">order-by</string>
+    <string name="settings_order_by_default" translatable="false">@string/settings_order_by_relevance_value</string>
+
+    <!-- Strings used for order-by relevance option!-->
+    <string name="settings_order_by_relevance_label">Relevance</string>
+    <string name="settings_order_by_relevance_value" translatable="false">relevance</string>
+
+    <!-- Strings used for order-by newest option!-->
+    <string name="settings_order_by_newest_label">Newest</string>
+    <string name="settings_order_by_newest_value" translatable="false">newest</string>
+
+    <!-- Strings used for order-by oldest option!-->
+    <string name="settings_order_by_oldest_label">Oldest</string>
+    <string name="settings_order_by_oldest_value" translatable="false">oldest</string>
+
+    <!-- Strings used for search topic !-->
+    <string name="settings_search_label">Topic</string>
+    <string name="settings_search_key" translatable="false">q</string>
+    <string name="settings_search_default_value" translatable="false">bitcoin</string>
 </resources>

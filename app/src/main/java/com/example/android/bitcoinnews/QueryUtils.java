@@ -127,22 +127,37 @@ public final class QueryUtils {
             JSONObject response = new JSONObject(JSONResponse);
             JSONObject object = response.getJSONObject("response");
             JSONArray array = object.getJSONArray("results");
+            JSONObject articleObject;
+            JSONArray bodyArray;
             String header;
             String body;
             String section;
             String datePublished = null;
             String author;
+            String url;
             for (int i = 0; i < array.length(); i++) {
-                object = array.getJSONObject(i);
-                header = object.getString("webTitle");
-                body = object.getString("webUrl");
-                section = object.getString("sectionName");
-                if (object.getString("webPublicationDate") != null)
-                    datePublished = object.getString("webPublicationDate");
-                JSONArray tagArray = object.getJSONArray("tags");
-                object = tagArray.getJSONObject(0);
-                author = object.getString("webTitle");
-                articles.add(new Article(header, body, section, datePublished, author));
+                articleObject = array.getJSONObject(i);
+                header = articleObject.getString("webTitle");
+                section = articleObject.getString("sectionName");
+                url = articleObject.getString("webUrl");
+                //check if publication date is given
+                if (articleObject.getString("webPublicationDate") != null)
+                    datePublished = articleObject.getString("webPublicationDate");
+                JSONArray tagArray = articleObject.getJSONArray("tags");
+                //check if author is known
+                if (tagArray.length() > 0) {
+                    object = tagArray.getJSONObject(0);
+                    author = object.getString("webTitle");
+                } else {
+                    author = "Unknown";
+                }
+                //load body summary from response
+                object = articleObject.getJSONObject("blocks");
+                bodyArray = object.getJSONArray("body");
+                object = (JSONObject) bodyArray.get(0);
+                body = object.getString("bodyTextSummary");
+
+                articles.add(new Article(header, body, section, datePublished, author, url));
             }
         } catch (Exception e) {
             Log.e(LOG_TAG, "Something went wrong in extractArticles method: " + e.toString());

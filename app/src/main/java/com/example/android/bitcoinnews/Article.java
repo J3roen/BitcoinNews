@@ -8,15 +8,24 @@ public class Article implements Serializable {
     private String section;
     private String datePublished;
     private String author;
+    private String url;
 
-    public Article(String header, String body, String section, String datePublished, String author) {
+    public Article(String header, String body, String section, String datePublished, String author, String url) {
         setHeader(header);
         setBody(body);
         setSection(section);
         setDatePublished(datePublished);
         setAuthor(author);
+        setUrl(url);
     }
 
+    public String getUrl() {
+        return this.url;
+    }
+
+    private void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getAuthor() {
         return author;

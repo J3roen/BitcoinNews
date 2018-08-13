@@ -14,25 +14,30 @@
         android:layout_height="wrap_content"
         tools:text="@string/article_header"
         android:textStyle="bold"
-        android:textSize="@dimen/article_body_text_size"/>
+        android:textSize="@dimen/article_header_text_size" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/article_section"
         tools:text="@string/article_section"
         android:textSize="@dimen/article_section_text_size"
-        android:paddingBottom="@dimen/article_section_bottom_margin"/>
+        android:paddingBottom="@dimen/article_section_bottom_margin"
+        android:textStyle="italic" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/article_body"
         tools:text="@string/article_body"
-        android:textSize="@dimen/article_body_text_size"/>
+        android:layout_marginBottom="@dimen/article_body_bottom_margin"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textSize="@dimen/article_body_text_size" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/article_date_text_size"
         tools:text="@string/article_date"
+        android:textStyle="italic"
         android:id="@+id/article_date"
         />
     <TextView
@@ -40,5 +45,6 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/article_author_text_size"
         android:id="@+id/article_author"
+        android:textStyle="italic"
         tools:text="@string/article_author"/>
 </LinearLayout>

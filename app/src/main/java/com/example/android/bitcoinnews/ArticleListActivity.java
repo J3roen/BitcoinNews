@@ -17,15 +17,21 @@ package com.example.android.bitcoinnews;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -35,7 +41,7 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
 
     private static final int ARTICLE_LOADER_ID = 1;
     private static final String LOG_TAG = ArticleListActivity.class.getSimpleName();
-    private final String sampleUrl = "https://content.guardianapis.com/search?q=bitcoin&lang=en&page-size=50&show-tags=contributor&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7";
+    private String GUARDIAN_REQUEST_URL = "https://content.guardianapis.com/search?lang=en&page-size=50&show-tags=contributor&api-key=609fcb55-3f4d-40df-b260-4ec04f0c3cd7&show-blocks=body";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -101,13 +107,28 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
             loaderManager.initLoader(ARTICLE_LOADER_ID, null, this);
     }
 
+    //instantiate and return loader with url depending on current settings
     @Override
     public Loader<List<Article>> onCreateLoader(int i, Bundle bundle) {
         Log.d(LOG_TAG, "TEST: onCreateLoader method called");
-        ArticleLoader articleLoader = new ArticleLoader(this.getApplicationContext(), sampleUrl);
-        return articleLoader;
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //getString retrieves a String value from the preference. Second parameter is default value for this preference.
+        String orderBy = sharedPrefs.getString(getString(R.string.settings_order_by_key), getString(R.string.settings_order_by_default));
+        String search = sharedPrefs.getString(getString(R.string.settings_search_key), getString(R.string.settings_search_default_value));
+        //parse breaks apart the URI in string that's passed into its parameter
+        Uri baseUri = Uri.parse(GUARDIAN_REQUEST_URL);
+        //buildUpon prepares the baseUri that we just parsed so we can add query parameters
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        //append query parameter and its value
+        uriBuilder.appendQueryParameter(getString(R.string.settings_order_by_key), orderBy);
+        uriBuilder.appendQueryParameter(getString(R.string.settings_search_key), search);
+
+        //Return new loader with completed url
+        return new ArticleLoader(this.getApplicationContext(), uriBuilder.toString());
     }
 
+    //if loading is finished, set adapter & view
     @Override
     public void onLoadFinished(Loader<List<Article>> loader, List<Article> articleList) {
         Log.d(LOG_TAG, "TEST: onLoadFinished method called");
@@ -132,4 +153,24 @@ public class ArticleListActivity extends AppCompatActivity implements LoaderMana
         Log.d(LOG_TAG, "TEST: onLoaderReset method called");
         mAdapter = null;
     }
+
+    //override onCreateOptionsMenu to bind layout to the menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    //override onOptionsItemSelected to bind settings activity to the menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

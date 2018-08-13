@@ -80,7 +80,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         @Override
         public void onClick(View v) {
-            String url = article.getBody();
+            String url = article.getUrl();
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             v.getContext().startActivity(i);
